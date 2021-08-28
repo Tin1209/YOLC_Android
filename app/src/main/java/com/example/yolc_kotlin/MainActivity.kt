@@ -1,5 +1,6 @@
 package com.example.yolc_kotlin
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,8 +25,7 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
     private var mPostButton: Button? = null
     private var mPatchButton: Button? = null
     private var mDeleteButton: Button? = null
-
-
+    private var moveLogin: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +41,12 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
         mPatchButton?.setOnClickListener(this)
         mDeleteButton = findViewById(R.id.button4)
         mDeleteButton?.setOnClickListener(this)
+
+        moveLogin = findViewById(R.id.login)
+        moveLogin?.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
 
         initAPI(BASE_URL)
     }
