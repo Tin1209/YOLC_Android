@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import com.example.yolc_kotlin.InF.YOLC_API
+import com.example.yolc_kotlin.data.PostItem
 import retrofit2.*
 
 import retrofit2.converter.gson.GsonConverterFactory
@@ -92,7 +94,7 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
         } else if(v == mPostButton){
             Log.d(TAG,"POST")
 
-            val item:PostItem = PostItem()
+            val item: PostItem = PostItem()
             item.setText("Android text")
             item.setTitle("Android title")
             val postCall:Call<PostItem>? = yAPI?.post_posts(item)
@@ -115,7 +117,7 @@ public class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
         } else if(v == mPatchButton){
             Log.d(TAG,"PATCH")
-            val item:PostItem = PostItem()
+            val item: PostItem = PostItem()
             item.setTitle("android patch title")
             item.setText("android patch text")
             val patchCall: Call<PostItem>? = yAPI?.patch_posts(1,item)

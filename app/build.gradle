@@ -1,12 +1,15 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
 }
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
+
+    buildFeatures{
+        dataBinding true
+    }
 
     defaultConfig {
         applicationId "com.example.yolc_kotlin"
@@ -22,6 +25,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFile 'proguard-passlogin.pro'
+
         }
     }
     compileOptions {
@@ -32,6 +37,7 @@ android {
         jvmTarget = '1.8'
     }
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', includes: ['*.jar'])
@@ -45,4 +51,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
+    implementation 'com.github.iamport:iamport-rest-client-java:0.2.15'
 }

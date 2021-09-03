@@ -1,4 +1,4 @@
-package com.example.yolc_kotlin
+package com.example.yolc_kotlin.data
 
 data class Login(
     val code: String,

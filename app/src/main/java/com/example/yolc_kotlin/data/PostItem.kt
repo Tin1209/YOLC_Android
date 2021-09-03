@@ -1,4 +1,4 @@
-package com.example.yolc_kotlin
+package com.example.yolc_kotlin.data
 
 class PostItem {
     private var title: String? = null

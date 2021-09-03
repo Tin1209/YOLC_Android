@@ -1,5 +1,6 @@
-package com.example.yolc_kotlin
+package com.example.yolc_kotlin.InF
 
+import com.example.yolc_kotlin.data.PostItem
 import retrofit2.Call
 import retrofit2.http.POST
 import retrofit2.http.Body
