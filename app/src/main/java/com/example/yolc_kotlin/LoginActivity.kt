@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.yolc_kotlin.InF.LoginService
 import com.example.yolc_kotlin.data.Login
 import kotlinx.android.synthetic.main.activity_login.*
 import retrofit2.Call
@@ -20,17 +21,8 @@ import retrofit2.http.POST
 class LoginActivity : AppCompatActivity(){
     val TAG = "LOGIN"
     private val BASE_URL = "http://ec2-18-191-209-53.us-east-2.compute.amazonaws.com"
+
     var isExistBlank = false
-
-    interface LoginService{
-        @FormUrlEncoded
-        @POST("/login/")
-        fun requestLogin(
-            @Field("username") userid:String,
-            @Field("password") userpw:String
-            ) : Call<Login>
-    }
-
     var login: Login? = null
 
     override fun onCreate(savedInstanceState: Bundle?){
@@ -41,8 +33,7 @@ class LoginActivity : AppCompatActivity(){
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
-        var loginService:LoginService = retrofit.create(LoginService::class.java)
+        var loginService: LoginService = retrofit.create(LoginService::class.java)
         var current = this
 
         btn_login.setOnClickListener{
@@ -52,7 +43,6 @@ class LoginActivity : AppCompatActivity(){
             val pw = edit_pw.text.toString()
 
             if(id.isEmpty() || pw.isEmpty()) isExistBlank = true
-
             if(!isExistBlank){
                 loginService.requestLogin(id, pw).enqueue(object: Callback<Login>{
                     override fun onFailure(call:Call<Login>, t:Throwable){
