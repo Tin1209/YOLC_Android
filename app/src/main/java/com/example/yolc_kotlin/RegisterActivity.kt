@@ -37,9 +37,12 @@ class RegisterActivity : AppCompatActivity() {
 
         sendSms.setOnClickListener{
             Log.d(TAG,"인증번호 전송 버튼 클릭")
-            val phone_number = textPhone.text.toString()
-            if(phone_number.length == 13) {
-                authService.smsAuth(phone_number).enqueue(object : Callback<Auth> {
+            val phoneNumber = textPhone.text.toString()
+            Log.d(TAG,phoneNumber)
+            Log.d(TAG,phoneNumber.length.toString())
+            if(phoneNumber.length == 11) {
+                Log.d(TAG,"번호입력 성공!")
+                authService.smsAuth(phoneNumber).enqueue(object : Callback<Auth> {
                     override fun onFailure(call: Call<Auth>, t: Throwable) {
                         Log.e("AUTH", "${t.message}")
                         var dialog = AlertDialog.Builder(this@RegisterActivity)
@@ -49,18 +52,21 @@ class RegisterActivity : AppCompatActivity() {
                     }
 
                     override fun onResponse(call: Call<Auth>, response: Response<Auth>) {
+                        Log.d(TAG,"요청 성공!")
                         var auth = response.body()
                         Log.d(TAG, auth.toString())
                     }
                 })
+            }else{
+                Log.d(TAG,"번호 오류")
             }
         }
 
         phoneAuth.setOnClickListener{
-            val auth_number = smsAuth.text.toString()
-            val phone_number = textPhone.text.toString()
-            if(phone_number.length == 13 && auth_number.length == 4) {
-                authService.getAuth(phoneNum = phone_number, authNum = auth_number)
+            val authNumber = smsAuth.text.toString()
+            val phoneNumber = textPhone.text.toString()
+            if(phoneNumber.length == 11 && authNumber.length == 4) {
+                authService.getAuth(phoneNum = phoneNumber, authNum = authNumber)
                     .enqueue(object : Callback<GetAuth> {
                         override fun onFailure(call: Call<GetAuth>, t: Throwable) {
                             Log.e("GetAuth", "${t.message}")
