@@ -84,6 +84,14 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txt_pw_re" />
 
+            <Button
+                android:id="@+id/QR"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="QR 코드 스캔"
+                app:layout_constraintTop_toBottomOf="@+id/edit_pw_re"
+                app:layout_constraintStart_toStartOf="@+id/edit_pw_re" />
 
             <EditText
                 android:id="@+id/textPhone"
@@ -94,8 +102,8 @@
                 android:hint="휴대폰 번호"
                 android:textSize="20dp"
                 app:layout_constraintHorizontal_bias="0.502"
-                app:layout_constraintStart_toStartOf="@+id/edit_pw_re"
-                app:layout_constraintTop_toBottomOf="@+id/edit_pw_re"/>
+                app:layout_constraintStart_toStartOf="@+id/QR"
+                app:layout_constraintTop_toBottomOf="@+id/QR"/>
 
             <Button
                 android:id="@+id/sendSms"
@@ -103,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:text="인증번호 전송"
                 android:layout_marginTop="20dp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/textPhone"
                 app:layout_constraintTop_toBottomOf="@+id/smsAuth"/>
 
             <EditText
@@ -135,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="회원가입 "
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/sendSms"
                 app:layout_constraintTop_toBottomOf="@+id/sendSms" />
 
 
