@@ -11,7 +11,10 @@ interface RegisterService {
     @POST("signup/")
     fun requestSignUp(
         @Field("username") username: String,
-        @Field("password") password: String
+        @Field("password") password: String,
+        @Field("name") name: String,
+        @Field("address") address: String,
+        @Field("phone_number") phone_number: String,
     ) : Call<Login>
 
 }
