@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.yolc_kotlin.InF.AuthService
@@ -11,7 +12,11 @@ import com.example.yolc_kotlin.InF.RegisterService
 import com.example.yolc_kotlin.data.Auth
 import com.example.yolc_kotlin.data.GetAuth
 import com.example.yolc_kotlin.data.Login
+import com.google.zxing.integration.android.IntentIntegrator
+import com.google.zxing.integration.android.IntentResult
 import kotlinx.android.synthetic.main.activity_registration.*
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,7 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RegisterActivity : AppCompatActivity() {
 
     val TAG: String = "Register"
-    private val BASE_URL = "http://ec2-18-191-209-53.us-east-2.compute.amazonaws.com"
+    private val BASE_URL = "http://18.116.171.86"
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
@@ -61,7 +66,6 @@ class RegisterActivity : AppCompatActivity() {
                 Log.d(TAG,"번호 오류")
             }
         }
-
         phoneAuth.setOnClickListener{
             val authNumber = smsAuth.text.toString()
             val phoneNumber = textPhone.text.toString()
@@ -87,7 +91,6 @@ class RegisterActivity : AppCompatActivity() {
                     })
             }
         }
-
         btn_register2.setOnClickListener{
             Log.d(TAG,"회원가입 버튼 클릭")
 
@@ -98,8 +101,11 @@ class RegisterActivity : AppCompatActivity() {
             val id = edit_id.text.toString()
             val pw = edit_pw.text.toString()
             val pw_re = edit_pw_re.text.toString()
+            val name = name.text.toString()
+            val address = address.text.toString()
+            val phone_number = textPhone.text.toString()
 
-            if(id.isEmpty() || pw.isEmpty() || pw_re.isEmpty()){
+            if(id.isEmpty() || pw.isEmpty() || pw_re.isEmpty() || name != "이름"){
                 isExistBlank = true
             } else{
                 if(pw == pw_re){
@@ -108,7 +114,8 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             if(!isExistBlank && isPWSame){
-                registerService.requestSignUp(id, pw).enqueue(object: Callback<Login>{
+                registerService.requestSignUp(username=id, password=pw, name=name, address=address, phone_number=phone_number)
+                    .enqueue(object: Callback<Login>{
                     override fun onFailure(call: Call<Login>, t:Throwable){
                         Log.e("SIGNUP", "${t.message}")
                         var dialog = AlertDialog.Builder(this@RegisterActivity)
@@ -141,6 +148,32 @@ class RegisterActivity : AppCompatActivity() {
                     dialogShow("not same")
                 }
             }
+        }
+        QR.setOnClickListener{
+            IntentIntegrator(this).initiateScan()
+        }
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
+        val result: IntentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
+                // todo
+            } else {
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show()
+                try{
+                    val obj: JSONObject =  JSONObject(result.contents)
+                    textPhone.setText(obj.getString("phone"))
+                    address.setText(obj.getString("address"))
+                } catch(e: JSONException){
+                    e.printStackTrace()
+                }
+            }
+        }
+        else{
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
