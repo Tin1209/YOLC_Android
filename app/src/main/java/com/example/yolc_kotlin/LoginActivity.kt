@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.yolc_kotlin.InF.LoginService
 import com.example.yolc_kotlin.data.Login
-import com.example.yolc_kotlin.fcm.MyFirebaseMessagingService
+import com.example.yolc_kotlin.databinding.ActivityLoginBinding
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_login.*
@@ -19,9 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+
 
 class LoginActivity : AppCompatActivity(){
     val TAG = "LOGIN"
@@ -34,7 +32,8 @@ class LoginActivity : AppCompatActivity(){
     @SuppressLint("StringFormatInvalid")
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        val binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -58,7 +57,7 @@ class LoginActivity : AppCompatActivity(){
         var loginService: LoginService = retrofit.create(LoginService::class.java)
         var current = this
 
-        btn_login.setOnClickListener{
+        binding.btnLogin.setOnClickListener{
             Log.d(TAG,"로그인 버튼 클릭")
 
             val id = edit_id.text.toString()
@@ -101,7 +100,7 @@ class LoginActivity : AppCompatActivity(){
 
         }
 
-        btn_register.setOnClickListener{
+        binding.btnRegister.setOnClickListener{
             Log.d(TAG,"회원가입 버튼 클릭")
 
             val intent = Intent(this,RegisterActivity::class.java)
