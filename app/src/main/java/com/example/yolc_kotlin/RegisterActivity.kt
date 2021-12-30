@@ -167,8 +167,6 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show()
                 try{
                     val obj: JSONObject =  JSONObject(result.contents)
-                    binding.textPhone.text = obj.getString("phone")
-                    binding.address.text = obj.getString("address")
                 } catch(e: JSONException){
                     e.printStackTrace()
                 }
