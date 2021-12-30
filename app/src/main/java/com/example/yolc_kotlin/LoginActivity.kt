@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class LoginActivity : AppCompatActivity(){
     val TAG = "LOGIN"
-    private val BASE_URL = "http://ec2-18-191-209-53.us-east-2.compute.amazonaws.com"
+    private val BASE_URL = "http://18.116.171.86"
 
     var isExistBlank = false
     var login: Login? = null
