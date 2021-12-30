@@ -12,9 +12,9 @@ import com.example.yolc_kotlin.InF.RegisterService
 import com.example.yolc_kotlin.data.Auth
 import com.example.yolc_kotlin.data.GetAuth
 import com.example.yolc_kotlin.data.Login
+import com.example.yolc_kotlin.databinding.ActivityRegistrationBinding
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
-import kotlinx.android.synthetic.main.activity_registration.*
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -30,7 +30,8 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registration)
+        val binding = ActivityRegistrationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -40,9 +41,9 @@ class RegisterActivity : AppCompatActivity() {
         val authService: AuthService = retrofit.create(AuthService::class.java)
         var checkAuth = false
 
-        sendSms.setOnClickListener{
+        binding.sendSms.setOnClickListener{
             Log.d(TAG,"인증번호 전송 버튼 클릭")
-            val phoneNumber = textPhone.text.toString()
+            val phoneNumber = binding.textPhone.text.toString()
             Log.d(TAG,phoneNumber)
             Log.d(TAG,phoneNumber.length.toString())
             if(phoneNumber.length == 11) {
@@ -66,9 +67,9 @@ class RegisterActivity : AppCompatActivity() {
                 Log.d(TAG,"번호 오류")
             }
         }
-        phoneAuth.setOnClickListener{
-            val authNumber = smsAuth.text.toString()
-            val phoneNumber = textPhone.text.toString()
+        binding.phoneAuth.setOnClickListener{
+            val authNumber = binding.smsAuth.text.toString()
+            val phoneNumber = binding.textPhone.text.toString()
             if(phoneNumber.length == 11 && authNumber.length == 4) {
                 authService.getAuth(phoneNum = phoneNumber, authNum = authNumber)
                     .enqueue(object : Callback<GetAuth> {
@@ -91,19 +92,19 @@ class RegisterActivity : AppCompatActivity() {
                     })
             }
         }
-        btn_register2.setOnClickListener{
+        binding.btnRegister2.setOnClickListener{
             Log.d(TAG,"회원가입 버튼 클릭")
 
             var isExistBlank = false
             var isPWSame = false
             var isExistID = false
 
-            val id = edit_id.text.toString()
-            val pw = edit_pw.text.toString()
-            val pw_re = edit_pw_re.text.toString()
-            val name = name.text.toString()
-            val address = address.text.toString()
-            val phone_number = textPhone.text.toString()
+            val id = binding.editId.text.toString()
+            val pw = binding.editPw.text.toString()
+            val pw_re = binding.editPwRe.text.toString()
+            val name = binding.name.text.toString()
+            val address = binding.address.text.toString()
+            val phone_number = binding.textPhone.text.toString()
 
             if(id.isEmpty() || pw.isEmpty() || pw_re.isEmpty() || name != "이름"){
                 isExistBlank = true
@@ -149,7 +150,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
-        QR.setOnClickListener{
+        binding.QR.setOnClickListener{
             IntentIntegrator(this).initiateScan()
         }
 
@@ -157,6 +158,7 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
         val result: IntentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        val binding = ActivityRegistrationBinding.inflate(layoutInflater)
         if(result != null) {
             if(result.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
@@ -165,8 +167,8 @@ class RegisterActivity : AppCompatActivity() {
                 Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show()
                 try{
                     val obj: JSONObject =  JSONObject(result.contents)
-                    textPhone.setText(obj.getString("phone"))
-                    address.setText(obj.getString("address"))
+                    binding.textPhone.text = obj.getString("phone")
+                    binding.address.text = obj.getString("address")
                 } catch(e: JSONException){
                     e.printStackTrace()
                 }
@@ -179,34 +181,39 @@ class RegisterActivity : AppCompatActivity() {
 
     fun dialogShow(type: String){
         val dialog = AlertDialog.Builder(this)
-        if(type.equals("blank")){
-            dialog.setTitle("회원가입 실패")
-            dialog.setMessage("입력란을 모두 작성해주세요")
-        } else if(type.equals("not same")){
-            dialog.setTitle("회원가입 실패")
-            dialog.setMessage("비밀번호가 일치하지 않습니다.")
-        } else if(type.equals("Exist ID")){
-            dialog.setTitle("회원가입 실패")
-            dialog.setMessage("이미 존재하는 ID 입니다.")
-        } else if(type.equals("not auth")){
-            dialog.setTitle("회원가입 실패")
-            dialog.setMessage("휴대폰 인증을 완료해주세요")
-        } else if(type.equals("success")){
-            dialog.setTitle("회원가입 성공!")
-            dialog.setMessage("회원가입에 성공하였습니다!")
-        } else if(type.equals("auth success")){
-            dialog.setTitle("인증 성공")
-            dialog.setMessage("인증이 완료되었습니다")
-        }
-        val dialog_listener = object: DialogInterface.OnClickListener {
-            override fun onClick(dialog: DialogInterface?, which: Int) {
-                when (which) {
-                    DialogInterface.BUTTON_POSITIVE ->
-                        Log.d(TAG, "다이얼로그")
-                }
+        when (type) {
+            "blank" -> {
+                dialog.setTitle("회원가입 실패")
+                dialog.setMessage("입력란을 모두 작성해주세요")
+            }
+            "not same" -> {
+                dialog.setTitle("회원가입 실패")
+                dialog.setMessage("비밀번호가 일치하지 않습니다.")
+            }
+            "Exist ID" -> {
+                dialog.setTitle("회원가입 실패")
+                dialog.setMessage("이미 존재하는 ID 입니다.")
+            }
+            "not auth" -> {
+                dialog.setTitle("회원가입 실패")
+                dialog.setMessage("휴대폰 인증을 완료해주세요")
+            }
+            "success" -> {
+                dialog.setTitle("회원가입 성공!")
+                dialog.setMessage("회원가입에 성공하였습니다!")
+            }
+            "auth success" -> {
+                dialog.setTitle("인증 성공")
+                dialog.setMessage("인증이 완료되었습니다")
             }
         }
-        dialog.setPositiveButton("확인",dialog_listener)
+        val dialogListener = DialogInterface.OnClickListener { dialog, which ->
+            when (which) {
+                DialogInterface.BUTTON_POSITIVE ->
+                    Log.d(TAG, "다이얼로그")
+            }
+        }
+        dialog.setPositiveButton("확인",dialogListener)
         dialog.show()
     }
 

@@ -13,7 +13,6 @@ import com.example.yolc_kotlin.data.Login
 import com.example.yolc_kotlin.databinding.ActivityLoginBinding
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.android.synthetic.main.activity_login.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -60,8 +59,8 @@ class LoginActivity : AppCompatActivity(){
         binding.btnLogin.setOnClickListener{
             Log.d(TAG,"로그인 버튼 클릭")
 
-            val id = edit_id.text.toString()
-            val pw = edit_pw.text.toString()
+            val id = binding.editId.text.toString()
+            val pw = binding.editPw.text.toString()
 
             if(id.isEmpty() || pw.isEmpty()) isExistBlank = true
             if(!isExistBlank){
