@@ -1,47 +1,48 @@
 package com.example.yolc_kotlin
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.fragment.app.FragmentTransaction
+import android.widget.FrameLayout
+import androidx.fragment.app.Fragment
 import com.example.yolc_kotlin.Fragment.FragHome
 import com.example.yolc_kotlin.Fragment.FragProfile
 import com.example.yolc_kotlin.Fragment.FragRecord
 import com.example.yolc_kotlin.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 public class MainActivity : AppCompatActivity(){
 
     lateinit var binding: ActivityMainBinding
-    var flag = "home"
+    private val f1: FrameLayout by lazy{
+        binding.mainLayout
+    }
+    private val bn: BottomNavigationView by lazy{
+        binding.bottomNavigationView
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        fun onNavigationItemSelected(p0: MenuItem): Boolean{
-            val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction().add(f1.id, FragHome()).commit()
 
-            when(p0.itemId){
-                R.id.home -> {
-                    val fragment_home = FragHome()
-                    transaction.replace(R.id.main_layout, fragment_home, "home")
-                }
-                R.id.record ->{
-                    val fragment_record = FragRecord()
-                    transaction.replace(R.id.main_layout, fragment_record, "record")
-                }
-                R.id.profile ->{
-                    val fragment_profile = FragProfile()
-                    transaction.replace(R.id.main_layout, fragment_profile, "profile")
-                }
+        bn.run{
+            setOnItemSelectedListener{item->
+                replaceFragment(
+                    when(item.itemId){
+                        R.id.home -> FragHome()
+                        R.id.record -> FragRecord()
+                        R.id.profile -> FragProfile()
+                        else -> FragHome()
+                    }
+                )
+                true
             }
-            transaction.addToBackStack(null)
-            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            transaction.commit()
-            return true
         }
+    }
+    private fun replaceFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction().replace(f1.id, fragment).commit()
     }
 }
 
