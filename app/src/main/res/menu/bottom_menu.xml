@@ -5,21 +5,18 @@
         android:id="@+id/home"
         android:icon="@drawable/ic_push"
         android:title="home"
-        android:enabled="false"
         />
 
     <item
         android:id="@+id/profile"
         android:icon="@drawable/ic_push"
         android:title="profile"
-        android:enabled="false"
         />
 
     <item
         android:id="@+id/record"
         android:icon="@drawable/ic_push"
         android:title="record"
-        android:enabled="false"
         />
 
 </menu>
