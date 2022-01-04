@@ -22,10 +22,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class LoginActivity : AppCompatActivity(){
     val TAG = "LOGIN"
-    private val BASE_URL = "http://18.116.171.86"
+    val app: url = url()
+    val BASE_URL = app.get_url()
 
     var isExistBlank = false
-    var login: Login? = null
 
 
     @SuppressLint("StringFormatInvalid")
@@ -77,13 +77,13 @@ class LoginActivity : AppCompatActivity(){
                         Log.d(TAG,"통신 성공")
                         var login = response.body()
                         var dialog = AlertDialog.Builder(this@LoginActivity)
-                        dialog.setTitle("알림")
-                        dialog.setMessage(login?.msg)
-                        dialogShow(dialog)
-
                         if(login?.code == "0000"){
                             startActivity(Intent(current, MainActivity::class.java))
-                            finish()
+                        }
+                        else{
+                            dialog.setTitle("알림")
+                            dialog.setMessage("잘못된 비밀번호이거나 존재하지 않는 ID입니다.")
+                            dialogShow(dialog)
                         }
                     }
                 })

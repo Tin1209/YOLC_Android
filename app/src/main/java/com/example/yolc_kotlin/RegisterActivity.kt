@@ -26,7 +26,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RegisterActivity : AppCompatActivity() {
 
     val TAG: String = "Register"
-    private val BASE_URL = "http://18.116.171.86"
+    val app: url = url()
+    val BASE_URL = app.get_url()
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
@@ -91,6 +92,9 @@ class RegisterActivity : AppCompatActivity() {
                         }
                     })
             }
+            else{
+                val log = "fail"
+            }
         }
         binding.btnRegister2.setOnClickListener{
             Log.d(TAG,"회원가입 버튼 클릭")
@@ -106,7 +110,7 @@ class RegisterActivity : AppCompatActivity() {
             val address = binding.address.text.toString()
             val phone_number = binding.textPhone.text.toString()
 
-            if(id.isEmpty() || pw.isEmpty() || pw_re.isEmpty() || name != "이름"){
+            if(id.isEmpty() || pw.isEmpty() || pw_re.isEmpty() || name.isEmpty()){
                 isExistBlank = true
             } else{
                 if(pw == pw_re){
