@@ -18,7 +18,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.YOLC_Kotlin"
         android:usesCleartextTraffic="true"
-        tools:targetApi="m">
+        tools:targetApi="m"
+        android:name="com.example.yolc_kotlin.url">
         <activity android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
