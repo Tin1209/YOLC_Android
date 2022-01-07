@@ -5,14 +5,13 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.view.View
+import android.widget.CheckBox
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.yolc_kotlin.InF.LoginService
 import com.example.yolc_kotlin.data.Login
 import com.example.yolc_kotlin.databinding.ActivityLoginBinding
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,6 +26,7 @@ class LoginActivity : AppCompatActivity(){
 
     var isExistBlank = false
 
+    var check = false
 
     @SuppressLint("StringFormatInvalid")
     override fun onCreate(savedInstanceState: Bundle?){
@@ -34,69 +34,64 @@ class LoginActivity : AppCompatActivity(){
         val binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
+        if(YolcSharedPreferences.getUserId(this).isNullOrBlank() ||
+            YolcSharedPreferences.getUserPass(this).isNullOrBlank()) {
+            var retrofit = Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            var loginService: LoginService = retrofit.create(LoginService::class.java)
+            var current = this
 
-            // Get new FCM registration token
-            val token = task.result
+            binding.btnLogin.setOnClickListener {
+                Log.d(TAG, "로그인 버튼 클릭")
 
-            // Log and toast
-            val msg = getString(R.string.msg_token_fmt, token)
-            Log.d(TAG, "token: " + msg)
-            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-        })
+                val id = binding.editId.text.toString()
+                val pw = binding.editPw.text.toString()
 
-        var retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        var loginService: LoginService = retrofit.create(LoginService::class.java)
-        var current = this
-
-        binding.btnLogin.setOnClickListener{
-            Log.d(TAG,"로그인 버튼 클릭")
-
-            val id = binding.editId.text.toString()
-            val pw = binding.editPw.text.toString()
-
-            if(id.isEmpty() || pw.isEmpty()) isExistBlank = true
-            if(!isExistBlank){
-                loginService.requestLogin(id, pw).enqueue(object: Callback<Login>{
-                    override fun onFailure(call:Call<Login>, t:Throwable){
-                        Log.e(TAG,"${t.message}")
-                        var dialog = AlertDialog.Builder(this@LoginActivity)
-                        dialog.setTitle("알림")
-                        dialog.setMessage("통신에 실패했습니다")
-
-                        dialogShow(dialog)
-                    }
-                    override fun onResponse(call:Call<Login>, response: Response<Login>){
-                        Log.d(TAG,"통신 성공")
-                        var login = response.body()
-                        var dialog = AlertDialog.Builder(this@LoginActivity)
-                        if(login?.code == "0000"){
-                            startActivity(Intent(current, MainActivity::class.java))
-                        }
-                        else{
+                if (id.isEmpty() || pw.isEmpty()) isExistBlank = true
+                if (!isExistBlank) {
+                    loginService.requestLogin(id, pw).enqueue(object : Callback<Login> {
+                        override fun onFailure(call: Call<Login>, t: Throwable) {
+                            Log.e(TAG, "${t.message}")
+                            var dialog = AlertDialog.Builder(this@LoginActivity)
                             dialog.setTitle("알림")
-                            dialog.setMessage("잘못된 비밀번호이거나 존재하지 않는 ID입니다.")
+                            dialog.setMessage("통신에 실패했습니다")
                             dialogShow(dialog)
                         }
-                    }
-                })
 
-            } else{
-                Log.d(TAG,"빈칸이 존재합니다.")
-                val dialog = AlertDialog.Builder(this@LoginActivity)
-                dialog.setTitle("로그인 실패")
-                dialog.setMessage("입력칸을 모두 채워주세요.")
+                        override fun onResponse(call: Call<Login>, response: Response<Login>) {
+                            Log.d(TAG, "통신 성공")
+                            var login = response.body()
+                            var dialog = AlertDialog.Builder(this@LoginActivity)
+                            if (login?.code == "0000") {
+                                if(check) {
+                                    YolcSharedPreferences.setUserId(this@LoginActivity, id)
+                                    YolcSharedPreferences.setUserPass(this@LoginActivity, id)
+                                }
+                                startActivity(Intent(current, MainActivity::class.java))
+                            } else {
+                                dialog.setTitle("알림")
+                                dialog.setMessage("잘못된 비밀번호이거나 존재하지 않는 ID입니다.")
+                                dialogShow(dialog)
+                            }
+                        }
+                    })
 
-                dialogShow(dialog)
+                } else {
+                    Log.d(TAG, "빈칸이 존재합니다.")
+                    val dialog = AlertDialog.Builder(this@LoginActivity)
+                    dialog.setTitle("로그인 실패")
+                    dialog.setMessage("입력칸을 모두 채워주세요.")
+                    dialogShow(dialog)
+                }
+
             }
-
+        }
+        else{
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
         binding.btnRegister.setOnClickListener{
@@ -119,6 +114,14 @@ class LoginActivity : AppCompatActivity(){
         }
         dialog.setPositiveButton("확인",dialog_listener)
         dialog.show()
+    }
+
+    fun onCheckedboxClicked(view: View){
+        if(view is CheckBox){
+            val checked: Boolean = view.isChecked
+            if(checked) check = true
+            else check = false
+        }
     }
 
 }
