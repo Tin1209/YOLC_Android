@@ -65,8 +65,8 @@ class LoginActivity : AppCompatActivity(){
                             var login = response.body()
                             var dialog = AlertDialog.Builder(this@LoginActivity)
                             if (login?.code == "0000") {
+                                YolcSharedPreferences.setUserId(this@LoginActivity, id)
                                 if(check) {
-                                    YolcSharedPreferences.setUserId(this@LoginActivity, id)
                                     YolcSharedPreferences.setUserPass(this@LoginActivity, id)
                                 }
                                 startActivity(Intent(current, MainActivity::class.java))
