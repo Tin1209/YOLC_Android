@@ -1,5 +1,6 @@
 package com.example.yolc_kotlin
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.FrameLayout
@@ -40,6 +41,12 @@ public class MainActivity : AppCompatActivity(){
                 true
             }
         }
+    }
+
+    fun goEditProfile(){
+        val intent = Intent(this, EditProfileActivity::class.java)
+        startActivity(intent)
+        finish()
     }
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().replace(f1.id, fragment).commit()
