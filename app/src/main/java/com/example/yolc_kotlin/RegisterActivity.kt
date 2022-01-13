@@ -157,7 +157,6 @@ class RegisterActivity : AppCompatActivity() {
         binding.QR.setOnClickListener{
             IntentIntegrator(this).initiateScan()
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
