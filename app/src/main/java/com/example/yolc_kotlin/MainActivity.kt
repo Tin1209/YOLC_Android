@@ -46,7 +46,6 @@ public class MainActivity : AppCompatActivity(){
     fun goEditProfile(){
         val intent = Intent(this, EditProfileActivity::class.java)
         startActivity(intent)
-        finish()
     }
     private fun replaceFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().replace(f1.id, fragment).commit()
