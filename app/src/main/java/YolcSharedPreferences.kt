@@ -1,7 +1,5 @@
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.yolc_kotlin.data.Login
-import retrofit2.Callback
 
 object YolcSharedPreferences {
     private val ACCOUNT: String = "account"
