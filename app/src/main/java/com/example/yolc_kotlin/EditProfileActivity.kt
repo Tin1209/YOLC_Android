@@ -1,10 +1,6 @@
 package com.example.yolc_kotlin
 
-import android.Manifest
-import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -16,13 +12,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.example.yolc_kotlin.data.ImageData
 import com.example.yolc_kotlin.databinding.ActivityEditProfileBinding
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -39,14 +31,13 @@ class EditProfileActivity: AppCompatActivity() {
         }
         val img: Bitmap = BitmapFactory.decodeStream(ins)
         ins?.close()
-        val resized = Bitmap.createScaledBitmap(img,512,512,true)
+        val resized = Bitmap.createScaledBitmap(img,1024,1024,true)
         val byteArrayOutputStream = ByteArrayOutputStream()
-        resized.compress(Bitmap.CompressFormat.JPEG,60,byteArrayOutputStream)
+        resized.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream)
         val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
-        val outStream = ByteArrayOutputStream()
-        val res: Resources = resources
         profileImageBase64 = Base64.encodeToString(byteArray, NO_WRAP)
         Log.d("ActivityResult", "success")
+        Log.d("encode Result", profileImageBase64)
         try{
 
         }catch(e:Exception){
@@ -72,6 +63,7 @@ class EditProfileActivity: AppCompatActivity() {
             val remove = mDialogView.findViewById<Button>(R.id.remove_image)
             edit.setOnClickListener{
                 selectGallery()
+
             }
         }
 
