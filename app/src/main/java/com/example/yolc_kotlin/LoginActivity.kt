@@ -23,9 +23,7 @@ class LoginActivity : AppCompatActivity(){
     val TAG = "LOGIN"
     val app: url = url()
     val BASE_URL = app.get_url()
-
     var isExistBlank = false
-
     var check = false
 
     @SuppressLint("StringFormatInvalid")
@@ -36,16 +34,15 @@ class LoginActivity : AppCompatActivity(){
 
         if(YolcSharedPreferences.getUserId(this).isNullOrBlank() ||
             YolcSharedPreferences.getUserPass(this).isNullOrBlank()) {
-            var retrofit = Retrofit.Builder()
+            val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-            var loginService: LoginService = retrofit.create(LoginService::class.java)
-            var current = this
+            val loginService: LoginService = retrofit.create(LoginService::class.java)
+            val current = this
 
             binding.btnLogin.setOnClickListener {
                 Log.d(TAG, "로그인 버튼 클릭")
-
                 val id = binding.editId.text.toString()
                 val pw = binding.editPw.text.toString()
 
@@ -59,7 +56,6 @@ class LoginActivity : AppCompatActivity(){
                             dialog.setMessage("통신에 실패했습니다")
                             dialogShow(dialog)
                         }
-
                         override fun onResponse(call: Call<Login>, response: Response<Login>) {
                             Log.d(TAG, "통신 성공")
                             var login = response.body()
@@ -77,7 +73,6 @@ class LoginActivity : AppCompatActivity(){
                             }
                         }
                     })
-
                 } else {
                     Log.d(TAG, "빈칸이 존재합니다.")
                     val dialog = AlertDialog.Builder(this@LoginActivity)
@@ -85,7 +80,6 @@ class LoginActivity : AppCompatActivity(){
                     dialog.setMessage("입력칸을 모두 채워주세요.")
                     dialogShow(dialog)
                 }
-
             }
         }
         else{
@@ -93,14 +87,12 @@ class LoginActivity : AppCompatActivity(){
             startActivity(intent)
             finish()
         }
-
         binding.btnRegister.setOnClickListener{
             Log.d(TAG,"회원가입 버튼 클릭")
-
             val intent = Intent(this,RegisterActivity::class.java)
             startActivity(intent)
+            finish()
         }
-
     }
 
     fun dialogShow(dialog:AlertDialog.Builder){
@@ -119,9 +111,7 @@ class LoginActivity : AppCompatActivity(){
     fun onCheckedboxClicked(view: View){
         if(view is CheckBox){
             val checked: Boolean = view.isChecked
-            if(checked) check = true
-            else check = false
+            check = checked
         }
     }
-
 }
