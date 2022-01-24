@@ -8,219 +8,129 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Button
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.yolc_kotlin.InF.ShowService
 import com.example.yolc_kotlin.InF.UploadService
-import com.example.yolc_kotlin.data.ImageData
 import com.example.yolc_kotlin.data.Login
 import com.example.yolc_kotlin.databinding.ActivityEditProfileBinding
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okio.BufferedSink
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
-import kotlin.concurrent.thread
-
 
 class EditProfileActivity: AppCompatActivity() {
     val app: url = url()
     private val BASE_URL = app.get_url()
+    private lateinit var userId: String
     private lateinit var uploadImg: Bitmap
+    private lateinit var imgDir: String
     private var currentImageURL: Uri? = null
-    private var originImg: Bitmap? = null
-    private var out: FileOutputStream? = null
-    private lateinit var file: File
+    private var curId: Int = 0
+    private lateinit var img1: WebView
+    private lateinit var img2: WebView
+    private lateinit var img3: WebView
+    private lateinit var img4: WebView
+    private lateinit var img5: WebView
+    private lateinit var img6: WebView
+    var test = false
 
     private val getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         result: ActivityResult ->
         Log.d("getContent", "in")
+        test = true
         currentImageURL = result.data?.data
         Log.d("ActivityResult", currentImageURL.toString())
         val ins: InputStream? = currentImageURL?.let{
             applicationContext.contentResolver.openInputStream(it)
         }
-        file = File(currentImageURL.toString())
         uploadImg = BitmapFactory.decodeStream(ins)
-        originImg = uploadImg
         ins?.close()
-        uploadImage(2)
+        uploadImage(curId)
     }
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         val bind = ActivityEditProfileBinding.inflate(layoutInflater)
+        userId = YolcSharedPreferences.getUserId(this)
         setContentView(bind.root)
-        for(i in 1..6){
-            when(i){
-                1 -> {
-                    thread(start = true) {
-                        val userId = YolcSharedPreferences.getUserId(this)
-                        val url = URL("http://18.119.47.187/${userId}/${1}/showImg/")
-                        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                        conn.doInput
-                        conn.connect()
-
-                        val input: InputStream = conn.inputStream
-                        originImg = BitmapFactory.decodeStream(input)
-                        Log.d("thread", "success")
-
-                    }
-                    bind.image1.setImageBitmap(originImg)
-                    Log.d("showImage", "success")
-                    originImg = null
-                }
-                2 -> {
-                    thread(start = true) {
-                        val userId = YolcSharedPreferences.getUserId(this)
-                        val url = URL("http://18.119.47.187/${userId}/${2}/showImg/")
-                        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                        conn.doInput
-                        conn.connect()
-
-                        val input: InputStream = conn.inputStream
-                        originImg = BitmapFactory.decodeStream(input)
-                        Log.d("thread", "success")
-
-                    }
-                    bind.image2.setImageBitmap(originImg)
-                    Log.d("showImage", "success")
-                    originImg = null
-                }
-                3 -> {
-                    thread(start = true) {
-                        val userId = YolcSharedPreferences.getUserId(this)
-                        val url = URL("http://18.119.47.187/${userId}/${3}/showImg/")
-                        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                        conn.doInput
-                        conn.connect()
-
-                        val input: InputStream = conn.inputStream
-                        originImg = BitmapFactory.decodeStream(input)
-                        Log.d("thread", "success")
-
-                    }
-                    bind.image3.setImageBitmap(originImg)
-                    Log.d("showImage", "success")
-                    originImg = null
-                }
-                4 -> {
-                    thread(start = true) {
-                        val userId = YolcSharedPreferences.getUserId(this)
-                        val url = URL("http://18.119.47.187/${userId}/${4}/showImg/")
-                        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                        conn.doInput
-                        conn.connect()
-
-                        val input: InputStream = conn.inputStream
-                        originImg = BitmapFactory.decodeStream(input)
-                        Log.d("thread", "success")
-
-                    }
-                    bind.image4.setImageBitmap(originImg)
-                    Log.d("showImage", "success")
-                    originImg = null
-                }
-                5 -> {
-                    thread(start = true) {
-                        val userId = YolcSharedPreferences.getUserId(this)
-                        val url = URL("http://18.119.47.187/${userId}/${5}/showImg/")
-                        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                        conn.doInput
-                        conn.connect()
-
-                        val input: InputStream = conn.inputStream
-                        originImg = BitmapFactory.decodeStream(input)
-                        Log.d("thread", "success")
-
-                    }
-                    bind.image5.setImageBitmap(originImg)
-                    Log.d("showImage", "success")
-                    originImg = null
-                }
-                6 -> {
-                    thread(start = true) {
-                        val userId = YolcSharedPreferences.getUserId(this)
-                        val url = URL("http://18.119.47.187/${userId}/${6}/showImg/")
-                        val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                        conn.doInput
-                        conn.connect()
-
-                        val input: InputStream = conn.inputStream
-                        originImg = BitmapFactory.decodeStream(input)
-                        Log.d("thread", "success")
-
-                    }
-                    bind.image6.setImageResource(R.drawable.ic_push)
-                    Log.d("showImage", "success")
-                    originImg = null
-                }
-            }
-            Log.d("when", "finish")
-        }
-
+        img1 = bind.profile1
+        img2 = bind.profile2
+        img3 = bind.profile3
+        img4 = bind.profile4
+        img5 = bind.profile5
+        img6 = bind.profile6
+        initWebView(img1,"1")
+        initWebView(img2,"2")
+        initWebView(img3,"3")
+        initWebView(img4,"4")
+        initWebView(img5,"5")
+        initWebView(img6,"6")
         bind.editImage1.setOnClickListener{
-            selectMenu(1)
+            curId = 1
+            selectMenu()
         }
-
         bind.editImage2.setOnClickListener{
-            selectMenu(2)
+            curId = 2
+            selectMenu()
         }
-
         bind.editImage3.setOnClickListener{
-            selectMenu(3)
+            curId = 3
+            selectMenu()
         }
-
         bind.editImage4.setOnClickListener{
-            selectMenu(4)
+            curId = 4
+            selectMenu()
         }
-
         bind.editImage5.setOnClickListener{
-            selectMenu(5)
+            curId = 5
+            selectMenu()
         }
-
         bind.editImage6.setOnClickListener{
-            selectMenu(6)
+            curId = 6
+            selectMenu()
         }
     }
-
-    private fun selectGallery(){
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = MediaStore.Images.Media.CONTENT_TYPE
-        intent.type = "image/*"
-        getContent.launch(intent)
-    }
-
     private fun uploadImage(id: Int){
         Log.d("uploadImage", "in")
-        val userId = YolcSharedPreferences.getUserId(this)
         var retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var uploadService: UploadService = retrofit.create(UploadService::class.java)
-        file.createNewFile()
-        val out = FileOutputStream(file)
-        originImg?.compress(CompressFormat.JPEG,100,out)
-        val reqImg = file.asRequestBody("image/*".toMediaType())
         val filename = "image${id}"
-        val body: MultipartBody.Part = MultipartBody.Part.createFormData("uploaded_file",filename,reqImg)
+        val photoDir = File(cacheDir.absolutePath + "/cameraphoto/")
+        if(!photoDir.exists()){
+            photoDir.mkdirs()
+        }
+        val imgFile = File(photoDir, "${filename}.jpg")
+        val fo: FileOutputStream
+        try{
+            imgFile.createNewFile()
+            fo = FileOutputStream(imgFile)
+            uploadImg.compress(CompressFormat.JPEG,100,fo)
+            fo.close()
+        } catch(e: FileNotFoundException){
+            e.printStackTrace()
+        } catch(e: IOException){
+            e.printStackTrace()
+        }
+        imgDir = cacheDir.absolutePath + "/cameraphoto/" + "${filename}.jpg"
+        val uploadFile = File(imgDir)
+        Log.d("file", uploadFile.isFile.toString())
+        val reqImg = uploadFile.asRequestBody("image/jpg".toMediaType())
+        val body: MultipartBody.Part = MultipartBody.Part.createFormData("img",filename,reqImg)
         uploadService.upload_image(user=userId,id=id,img=body).enqueue(object: Callback<Login> {
             override fun onFailure(call: Call<Login>, t: Throwable) {
                 Log.e("UploadImage", "${t.message}")
@@ -229,45 +139,40 @@ class EditProfileActivity: AppCompatActivity() {
                 Log.d("UploadImage", "통신 성공")
                 var login = response.body()
                 Log.d("UploadImage", login?.code.toString())
-                showImage(id)
+                when(curId){
+                    1 -> {img1.loadUrl("$BASE_URL$userId/1/showImg")}
+                    2 -> {img2.loadUrl("$BASE_URL$userId/2/showImg")}
+                    3 -> {img3.loadUrl("$BASE_URL$userId/3/showImg")}
+                    4 -> {img4.loadUrl("$BASE_URL$userId/4/showImg")}
+                    5 -> {img5.loadUrl("$BASE_URL$userId/5/showImg")}
+                    6 -> {img6.loadUrl("$BASE_URL$userId/6/showImg")}
+                }
             }
         })
     }
-
-    private fun showImage(id: Int){
-        thread(start = true) {
-            val userId = YolcSharedPreferences.getUserId(this)
-            val url = URL("http://18.119.47.187/${userId}/${id}/showImg/")
-            val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-            conn.doInput
-            conn.connect()
-
-            val input: InputStream = conn.inputStream
-            originImg = BitmapFactory.decodeStream(input)
-            Log.d("thread", "success")
-
-        }
-    }
-
-    private fun selectMenu(id: Int){
+    private fun selectMenu(){
         val mDialogView = LayoutInflater.from(this).inflate(R.layout.image_dialog,null)
         val mBuilder = AlertDialog.Builder(this)
             .setView(mDialogView)
             .setTitle(" ")
         mBuilder.show()
-
         val edit = mDialogView.findViewById<Button>(R.id.edit_image)
         val remove = mDialogView.findViewById<Button>(R.id.remove_image)
         edit.setOnClickListener{
-            selectGallery()
-//            uploadImage(id)
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = MediaStore.Images.Media.CONTENT_TYPE
+            intent.type = "image/*"
+            getContent.launch(intent)
         }
     }
-
-    inner class BitmapRequestBody(private val bitmap: Bitmap): RequestBody(){
-        override fun contentType(): MediaType = "image/jpeg".toMediaType()
-        override fun writeTo(sink: BufferedSink){
-            bitmap.compress(CompressFormat.JPEG,99,sink.outputStream())
-        }
+    private fun initWebView(wView: WebView, imageId: String){
+        val ws = wView.settings
+        ws.setSupportMultipleWindows(false)
+        ws.useWideViewPort
+        ws.loadWithOverviewMode
+        ws.javaScriptEnabled
+        ws.domStorageEnabled
+        wView.webViewClient = WebViewClient()
+        wView.loadUrl("$BASE_URL$userId/$imageId/showImg/")
     }
 }
