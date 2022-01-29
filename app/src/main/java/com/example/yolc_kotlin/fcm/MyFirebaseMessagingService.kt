@@ -11,43 +11,45 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.yolc_kotlin.MainActivity
+import com.example.yolc_kotlin.OpenDoorActivity
 import com.example.yolc_kotlin.R
+import com.example.yolc_kotlin.url
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.google.firebase.messaging.FirebaseMessaging
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(p0: String) {
+        super.onNewToken(p0)
         Log.d(TAG, "Refreshed token: $p0")
-
-        val pref = this.getSharedPreferences("token", Context.MODE_PRIVATE)
-        val editor = pref.edit()
-        editor.putString("token", p0).apply()
-        editor.commit()
-
-        Log.i("Log: ", "success to saving token")
     }
 
-    override fun onMessageReceived(p0: RemoteMessage) {
-        Log.d(TAG, "From: " + p0!!.from)
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        Log.d(TAG, "From: " + remoteMessage.from)
 
-        if (p0.data.isNotEmpty()) {
-            Log.i("Body: ", p0.data["body"].toString())
-            Log.i("Title: ", p0.data["title"].toString())
-            sendNotification(p0)
+        if (remoteMessage.data.isNotEmpty()) {
+            Log.i("Body: ", remoteMessage.data["body"].toString())
+            Log.i("Title: ", remoteMessage.data["title"].toString())
+            val isExternal = remoteMessage.data["isExternal"].toString()
+            sendNotification(remoteMessage, isExternal)
         } else {
             Log.i("error: ", "data is empty.")
-            Log.i("data: ", p0.data.toString())
+            Log.i("data: ", remoteMessage.data.toString())
         }
     }
 
-    private fun sendNotification(remoteMessage: RemoteMessage) {
+    private fun sendNotification(remoteMessage: RemoteMessage, isExternal: String) {
 
         val uniId: Int = (System.currentTimeMillis() / 7).toInt()
-
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        lateinit var intent: Intent
+        if(isExternal == "1"){
+            intent = Intent(this, OpenDoorActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+        else{
+            intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         val pendingIntent =
             PendingIntent.getActivity(this, uniId, intent, PendingIntent.FLAG_ONE_SHOT)
 
@@ -70,9 +72,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val channel =
                 NotificationChannel(channelId, "Notice", NotificationManager.IMPORTANCE_DEFAULT)
             notificationManager.createNotificationChannel(channel)
-
         }
-
         notificationManager.notify(uniId, notificationBuilder.build())
     }
 }
