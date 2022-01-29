@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.yolc_kotlin.R
+import com.example.yolc_kotlin.databinding.FragmentHomeBinding
 
 class FragHome: Fragment() {
 
@@ -13,6 +13,7 @@ class FragHome: Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 }
