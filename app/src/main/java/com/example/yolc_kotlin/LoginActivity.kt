@@ -60,7 +60,9 @@ class LoginActivity : AppCompatActivity(){
                             Log.d(TAG, "통신 성공")
                             var login = response.body()
                             var dialog = AlertDialog.Builder(this@LoginActivity)
+                            Log.d("code", login?.code.toString())
                             if (login?.code == "0000") {
+                                YolcSharedPreferences.setAddress(this@LoginActivity, login?.address)
                                 YolcSharedPreferences.setUserId(this@LoginActivity, id)
                                 if(check) {
                                     YolcSharedPreferences.setUserPass(this@LoginActivity, id)
